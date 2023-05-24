@@ -1,0 +1,126 @@
+DROP DATABASE IF EXISTS Bar;
+
+CREATE DATABASE Bar;
+
+USE Bar;
+
+CREATE TABLE sedes(
+id_sede INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+nombre_sede VARCHAR(50) NOT NULL,
+ciudad VARCHAR(50) NOT NULL,
+direccion_sede VARCHAR(50) NOT NULL,
+fecha DATETIME
+);
+
+CREATE TABLE usuarios(
+id_usuario INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+numero_identificacion INT NOT NULL,
+nombres VARCHAR(50) NOT NULL,
+apellidos VARCHAR(50) NOT NULL,
+correo VARCHAR(50) NOT NULL,
+contraseña VARCHAR(150) NOT NULL,
+rol VARCHAR(10) NOT NULL,
+id_sede INT,
+FOREIGN KEY (id_sede) REFERENCES sedes(id_sede),
+fecha DATETIME
+);
+
+
+
+CREATE TABLE mesas(
+id_mesa INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+numero_mesa INT NOT NULL,
+id_sede INT,
+FOREIGN KEY (id_sede) REFERENCES sedes(id_sede),
+id_usuario INT,
+FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+fecha DATETIME
+);
+
+CREATE TABLE proveedores(
+id_proveedor INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+nit INT NOT NULL,
+nombre_proveedor VARCHAR(50) NOT NULL,
+ciudad VARCHAR(50) NOT NULL,
+id_sede INT,
+FOREIGN KEY (id_sede) REFERENCES sedes(id_sede),
+fecha DATETIME
+);
+
+CREATE TABLE inventario(
+id_articulo INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+nombre_articulo VARCHAR(50) NOT NULL,
+cantidad INT NOT NULL,
+precio DOUBLE(10,2) NOT NULL,
+id_proveedor INT,
+FOREIGN KEY (id_proveedor) REFERENCES proveedores(id_proveedor),
+id_sede INT,
+FOREIGN KEY (id_sede) REFERENCES sedes(id_sede),
+fecha DATETIME
+);
+
+CREATE TABLE pedidos (
+    id_pedido INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    id_articulo INT,
+    FOREIGN KEY (id_articulo) REFERENCES inventario(id_articulo),
+    id_mesa INT,
+    FOREIGN KEY (id_mesa) REFERENCES mesas(id_mesa),
+    cantidad INT NOT NULL,
+    id_usuario INT,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    id_sede INT,
+    FOREIGN KEY (id_sede) REFERENCES sedes(id_sede),
+    fecha DATETIME    
+);
+
+
+CREATE TABLE factura(
+id_factura INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+id_sede INT,
+FOREIGN KEY (id_sede) REFERENCES sedes(id_sede),
+id_articulo INT,
+FOREIGN KEY (id_articulo) REFERENCES inventario(id_articulo),  
+id_usuario INT,
+FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+fecha DATETIME   
+);
+
+INSERT INTO sedes (nombre_sede, ciudad, direccion_sede, fecha)
+VALUES ('Sede Principal', 'Bogotá', 'Calle 100 #20-30', NOW());
+
+INSERT INTO sedes (nombre_sede, ciudad, direccion_sede, fecha)
+VALUES ('Sede Norte', 'Medellín', 'Carrera 80 #45-20', NOW());
+
+INSERT INTO sedes (nombre_sede, ciudad, direccion_sede, fecha)
+VALUES ('Sede Sur', 'Cali', 'Avenida 6 #23-70', NOW());
+
+INSERT INTO sedes (nombre_sede, ciudad, direccion_sede, fecha)
+VALUES ('Sede Occidente', 'Barranquilla', 'Carrera 50 #80-90', NOW());
+
+INSERT INTO usuarios (numero_identificacion, nombres, apellidos, correo, contraseña, rol, id_sede, fecha) VALUES 
+(1016123456, 'Jeyson', 'Triana', 'admin@gmail.com', 'admin', 'admin', 1 , NOW()),
+(1234567891, 'Pepita', 'Perez', 'mesero@gmail.com', 'mesero', 'mesero', 2 , NOW()),
+(951753648, 'Francessco', 'Virgolinii', 'cajero@gmail.com', 'cajero', 'cajero', 3, NOW());
+
+
+INSERT INTO `proveedores` (`nit`, `nombre_proveedor`, `ciudad`, `id_sede`, `fecha`) VALUES
+(123456789, 'Distribuidora de licores S.A.', 'Bogotá', 1, NOW()),
+(987654321, 'Cervecería Nacional', 'Medellín', 2, NOW()),
+(456789012, 'Proveedora de snacks y botanas', 'Cali', 3, NOW()),
+(789012345, 'Distribuidora de vinos y licores', 'Barranquilla', 4, NOW());
+
+INSERT INTO inventario(nombre_articulo, cantidad, precio, id_proveedor, id_sede, fecha)
+VALUES
+    ('Cerveza Corona', 200, 5000, 1, 1, NOW()),
+    ('Vino tinto', 100, 35000, 2, 1, NOW()),
+    ('Ginebra', 80, 30000, 3, 2, NOW()),
+    ('Ron Medellín 12 años', 50, 60000, 1, 2, NOW()),
+    ('Whisky Johnnie Walker Red Label', 100, 45000, 2, 3, NOW()),
+    ('Tequila José Cuervo Especial', 30, 50000, 3, 3, NOW()),
+    ('Cerveza Heineken', 150, 6000, 1, 4, NOW()),
+    ('Cóctel Mojito', 70, 18000, 2, 4, NOW()),
+    ('Cóctel Margarita', 50, 20000, 3, 1, NOW()),
+    ('Cóctel Piña colada', 40, 22000, 1, 2, NOW()),
+    ('Cóctel Sex on the beach', 60, 21000, 2, 3, NOW()),
+    ('Agua Mineral', 120, 5000, 3, 4, NOW())
+;
